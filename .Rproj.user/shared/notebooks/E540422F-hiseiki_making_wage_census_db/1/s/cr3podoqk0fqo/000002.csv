@@ -1,0 +1,51 @@
+"0","```r
+for(i in files){
+  
+  year <-  i %>% str_sub(start = 3,end = 6) %>% as.numeric()
+  
+  path <- here(\"data\",\"tanjikan_hiseiki\",files[2] %>% str_sub(start = 3)) 
+  
+  base_df <-  base_df %>% 
+    mutate(year = year)
+  
+  sheet_name_list <- path %>% excel_sheets()
+  len_sheet <- length(sheet_name_list)
+  
+  j <- sheet_name_list[1]
+  
+  # if(year<2020){
+  #   j <- \"産業計～Ｒサービス業(他に分類されないもの)\"
+  # }  else {
+  #   j <- \"(学歴計)産業計～Ｒサービス業(他に分類されないもの)\"
+  # }
+  
+  
+  
+
+  
+
+
+    tmp <- read_xlsx(path,
+         sheet = j,
+         col_names = FALSE,
+         range = \"E11:K672\") %>% 
+      mutate_all(as.numeric) %>% 
+      mutate_all(~replace_na(.,0)) %>%
+      set_colnames(var_list) %>% 
+      
+
+      mutate(year = year )
+    
+    
+      tmp <- tmp %>% 
+        left_join(base_df,by = c(\"year\"))%>% 
+        select(year,sex,age_group,ind,everything())
+      
+      df_master <- rbind(df_master,tmp)
+    
+   
+  }
+
+```"
+"1","New names:New names:New names:New names:New names:New names:New names:New names:New names:New names:New names:New names:New names:New names:New names:New names:New names:New names:New names:
+"

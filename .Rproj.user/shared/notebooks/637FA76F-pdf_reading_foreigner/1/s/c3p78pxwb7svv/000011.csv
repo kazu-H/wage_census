@@ -1,0 +1,12 @@
+"0","out <- extract_tables(path,
+                      pages = pages[i],
+                      guess = F,
+                      output = ""data.frame"",
+                      area =list(c(top = 102.46428571429, 
+                                   left = 88.072601802766, 
+                                   bottom = 641.824900793651, 
+                                   right = 927.71049862817))
+                      )
+"
+"2","Error in is.factor(x) : object 'path' not found
+"

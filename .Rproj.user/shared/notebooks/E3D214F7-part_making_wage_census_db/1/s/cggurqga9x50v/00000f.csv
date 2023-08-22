@@ -1,0 +1,27 @@
+"0","library(tidyverse)"
+"0","library(readxl)"
+"0","library(magrittr)"
+"2","
+ 次のパッケージを付け加えます: ‘magrittr’ 
+
+"
+"2"," 以下のオブジェクトは ‘package:purrr’ からマスクされています:
+
+    set_names
+
+"
+"2"," 以下のオブジェクトは ‘package:tidyr’ からマスクされています:
+
+    extract
+
+"
+"0","library(here)"
+"0",""
+"0",""
+"0",""
+"0","files <-  list.files(here(""data"",""part""),"
+"0","                     pattern = ""xlsx"","
+"0","                     full.names = FALSE)"
+"0",""
+"0","# here(""data"",""tanjikan_hiseiki"",files[2])"
+"0","# files[2] %>% str_sub(start = 3)"

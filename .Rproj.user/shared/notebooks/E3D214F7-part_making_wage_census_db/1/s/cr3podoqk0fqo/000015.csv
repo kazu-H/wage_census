@@ -1,0 +1,12 @@
+"0","write.csv(df_master %>% select(year,sex,age_group,ind,everything()),
+          here(""treated_data"",""短時間労働者全体_賃金構造基本統計調査.csv""),
+          fileEncoding = ""cp932"",
+          row.names = F)
+"
+"1","[1m[33mError[39m in `select()`:[22m
+[33m![39m Can't subset columns that don't exist.
+[31m✖[39m Column `ind` doesn't exist.
+Backtrace:
+[90m 1. [39m[1mutils[22m::write.csv(...)
+[90m 9. [39m[1m[94mdplyr:::select.data.frame([39m[22m., year, sex, age_group, ind, everything()[1m[94m)[39m[22m
+"

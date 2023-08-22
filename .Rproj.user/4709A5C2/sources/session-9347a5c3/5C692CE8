@@ -1,0 +1,27 @@
+{
+    "id": "5C692CE8",
+    "path": "D:/develop/R/wage_census/code/making_wage_census_db.Rmd",
+    "project_path": "code/making_wage_census_db.Rmd",
+    "type": "r_markdown",
+    "hash": "0",
+    "contents": "",
+    "dirty": true,
+    "created": 1687236780677.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "chunk_output_type": "inline",
+        "source_window_id": "waeuh73rhjv3t",
+        "Source": "Source",
+        "cursorPosition": "76,32",
+        "scrollLine": "36"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1687239294,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1687244430981,
+    "read_only": false,
+    "read_only_alternatives": []
+}

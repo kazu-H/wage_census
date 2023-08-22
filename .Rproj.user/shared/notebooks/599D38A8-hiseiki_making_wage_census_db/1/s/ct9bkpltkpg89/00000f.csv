@@ -1,0 +1,16 @@
+"0","library(magrittr)
+"
+"2","
+ 次のパッケージを付け加えます: ‘magrittr’ 
+
+"
+"2"," 以下のオブジェクトは ‘package:purrr’ からマスクされています:
+
+    set_names
+
+"
+"2"," 以下のオブジェクトは ‘package:tidyr’ からマスクされています:
+
+    extract
+
+"

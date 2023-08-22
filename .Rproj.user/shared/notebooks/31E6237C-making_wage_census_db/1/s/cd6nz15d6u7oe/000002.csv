@@ -1,0 +1,21 @@
+"0","```r
+for(k in 1:(sex_num*firm_num*school_num)){
+  
+      
+  
+      firm_cat <- ceiling((k - 24*(ceiling(k/24)-1))/multip)
+      sex_cat <- ceiling(k/firm_num/school_num)
+      school_cat <- (k-(school_num*floor((k-1)/school_num)))
+      
+      const <- firm_num*school_num
+      firm_cat <- ceiling((k - const*(ceiling(k/const)-1))/multip)
+      
+      vertical_start <-1+ length(age_list)*(k -sex_num*school_num*floor((k-1)/sex_num/school_num)-1)
+      horizontal_start <- 1 + length(var_list)*(firm_cat-1)
+      
+      #print(c(k,vertical_start,horizontal_start,sex_list[sex_cat],firm_size_list[firm_cat],school_list[school_cat]))
+      #print(c(k,vertical_start,school_cat,ceiling((k - 32*(ceiling(k/32)-1))/multip),32*(ceiling(k/32)-1)))
+      print(c(k,firm_cat,firm_size_list[firm_cat]))
+  
+}
+```"

@@ -1,0 +1,137 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+
+```{r}
+library(tidyverse)
+library(readxl)
+library(here)
+
+
+
+files <-  list.files(here("data","ippan"),
+                     pattern = "xlsx",
+                     full.names = TRUE)
+
+
+
+```
+
+
+```{r, warning=FALSE}
+
+age_list <- c("total","~19","20~24","25~29","30~34","35~39","40~44","45~49","50~54","55~59","60~64","65~69","70~")
+sex_list <- c("total","male","female")
+firm_size_list <- c("total","over1000","100~999","10~99")
+
+school_list_before2020 <- c("total","jhs","hs","associate","univ_and_grad")
+school_list_after2020 <- c("total","jhs","hs","vocational","associate","univ","grad","NA")
+
+var_list <- c("age","kinzoku","syoteinai_jikan","syoteigai_jikan","teiki","syoteinai","tokubetsu","labor")
+
+
+```
+
+
+##out of sample を除いたもの
+
+```{r, warning=FALSE}
+df_master <-NULL
+
+
+for(i in files){
+  
+  #フォルダによって年の文字の視点を変える
+  #ディレクトリの名前に依存しないように、後ろから数える
+  year <-  i %>% str_sub(start = -15,end = -12) %>% as.numeric()
+  
+  if(year<2020){
+    school_list <- school_list_before2020
+  } 
+  else {
+    school_list <- school_list_after2020
+  }
+  
+  sheet_name_list <- i %>% excel_sheets()
+  len_sheet <- length(sheet_name_list)
+  
+  #dfを小さく分割して、それぞれをdfとして縦につなげていく
+  firm_num <- length(firm_size_list)
+  sex_num <- length(sex_list)
+  school_num <- length(school_list)
+  
+  multip <- school_num
+  
+  block_num <- firm_num*sex_num*school_num
+  
+  const <- firm_num*school_num
+  
+  for(j in 1:len_sheet){
+
+    tmp <- read_xlsx(i,
+         sheet = j,
+         col_names = FALSE,
+         range = str_c("D13:AI",13*sex_num*school_num+12)) %>% 
+      mutate_all(as.numeric) %>% 
+      mutate_all(~replace_na(.,0))
+      
+    for(k in 1:block_num){
+      
+      firm_cat <- ceiling((k - const*(ceiling(k/const)-1))/multip)
+      sex_cat <- ceiling(k/firm_num/school_num)
+      school_cat <- (k-(school_num*floor((k-1)/school_num)))
+      
+      
+      vertical_start <-1+ length(age_list)*(k -sex_num*school_num*floor((k-1)/sex_num/school_num)-1)
+      horizontal_start <- 1 + length(var_list)*(ceiling(k/sex_num/school_num)-1)
+      
+      df <- tmp[vertical_start:(vertical_start+length(age_list)-1),
+                horizontal_start:(horizontal_start+length(var_list)-1)]
+      
+
+      colnames(df) <- var_list
+      df["age_group"] <-  age_list
+      df["sex"] <- sex_list[sex_cat]
+      df["firm"] <- firm_size_list[firm_cat]
+      df["school"] <- school_list[school_cat]
+      df["ind"] <- sheet_name_list[j]
+      df["year"] <- year
+      
+      df <- df %>% select(year,sex,age_group,ind,firm,school,everything())
+      
+      df_master <- rbind(df_master,df)
+    
+   }
+  }
+}
+
+write.csv(df_master,here("treated_data","一般労働者全体_賃金構造基本統計調査.csv"),fileEncoding = "cp932")
+
+```
+
+```{r}
+for(k in 1:(sex_num*firm_num*school_num)){
+  
+      
+  
+      firm_cat <- ceiling((k - 24*(ceiling(k/24)-1))/multip)
+      sex_cat <- ceiling(k/firm_num/school_num)
+      school_cat <- (k-(school_num*floor((k-1)/school_num)))
+      
+      const <- firm_num*school_num
+      firm_cat <- ceiling((k - const*(ceiling(k/const)-1))/multip)
+      
+      vertical_start <-1+ length(age_list)*(k -sex_num*school_num*floor((k-1)/sex_num/school_num)-1)
+      horizontal_start <- 1 + length(var_list)*(firm_cat-1)
+      
+      #print(c(k,vertical_start,horizontal_start,sex_list[sex_cat],firm_size_list[firm_cat],school_list[school_cat]))
+      #print(c(k,vertical_start,school_cat,ceiling((k - 32*(ceiling(k/32)-1))/multip),32*(ceiling(k/32)-1)))
+      print(c(k,firm_cat,firm_size_list[firm_cat]))
+  
+}
+```
+
+

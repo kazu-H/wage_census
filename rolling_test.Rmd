@@ -1,0 +1,32 @@
+
+
+```{r}
+a <- c(43,82,38,13,54,74,23,73,16,82,10,1,48,93,57,23,23,86,63,23,24,25,26,65)
+b <- seq(as.Date("2010-01-01"), as.Date("2010-12-01"), by = "months")
+
+group <- c(rep("group1",length(a)/2),rep("group2",length(a)/2))
+
+
+testDF <- data.frame(group,a,b)
+```
+
+```{r}
+library(dplyr)
+library(magrittr)
+library(zoo)
+
+testDF <- testDF %>% 
+      group_by(group) %>% 
+      mutate(c =as.numeric(rollapplyr(a, 5, function(x) {
+      tab <- sort(table(x), decreasing = TRUE)
+      if(length(unique(tab)) == 1) NA
+      #重複するものが２つあるときは、大きい値を採用するように指定している。
+      #ここの出力を指定することで重複が複数ある時の指定ができる。
+      else if(length(unique(tab)) == 3)names(tab)[1]
+      else names(tab)[1]
+    }, fill = NA))
+    ) %>% 
+  return()
+  
+```
+

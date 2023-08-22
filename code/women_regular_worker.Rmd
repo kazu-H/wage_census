@@ -1,0 +1,106 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+正規・非正規の動向を評価するためのdataを整備する。
+
+```{r}
+library(tidyverse)
+library(readxl)
+
+dir <- "C:\\Users\\bunse\\Documents\\labor_2months"
+
+files <-  list.files(str_c(dir,"\\koyou_tokusyu"),
+                     pattern = "xls",
+                     full.names = TRUE)
+
+
+
+```
+
+
+```{r, warning=FALSE}
+#就業形態は、"今月"_"先月"の順番で統一。
+
+transition_cols <- c("sex",
+                     "age",
+                     "yyyymm",
+
+                     "seiki_thismonth", #今月いた15歳以上人口から考える
+                     "seiki_lastmonth", #先月いた15歳以上人口から考える
+                     
+                     "seiki_seiki",
+                     "seiki_hiseiki",
+                     "seiki_unemp",
+                     "seiki_nilf",
+
+                     
+                     "hiseiki_seiki",
+                     "unemp_seiki",
+                     "nilf_seiki"
+
+
+
+                     )
+
+
+
+age_list <- c("total","15-34","35-54","55-")
+sex_list <- c("total","male","female")
+
+```
+
+
+##out of sample を除いたもの
+
+```{r, warning=FALSE}
+df_master <- data.frame(matrix(ncol = length(transition_cols))[0,])
+colnames(df_master) <- transition_cols
+
+for(i in files){
+  
+  for(j in 1:12){
+
+  
+  
+    tmp <- read_xls(i,
+         sheet = j,
+         range = "T18:BJ60") %>% 
+      mutate_all(as.numeric) %>% 
+      mutate_all(~replace_na(.,0))
+      
+    
+    df <- data.frame(matrix(ncol = length(transition_cols))[0,])
+    colnames(df) <- transition_cols
+    
+    df[1,"age"] <- age_list[j - 4 *(ceiling(j/4)-1)] 
+    df[1,"sex"] <- sex_list[ceiling(j/4)]
+    
+    df[1,"yyyymm"] <- i %>% str_sub(start = -10,end = -5) %>% as.numeric()
+    
+    df[1,"seiki_lastmonth"] <- as.numeric(tmp[12,2])+as.numeric(tmp[26,2]) -as.numeric(tmp[12,42])-as.numeric(tmp[12,43])-as.numeric(tmp[26,42])-as.numeric(tmp[26,43])
+    
+    df[1,"seiki_seiki"] <- as.numeric(tmp[12,12])+as.numeric(tmp[26,12]) +as.numeric(tmp[12,26])+as.numeric(tmp[26,26]) 
+    df[1,"seiki_hiseiki"] <- as.numeric(tmp[12,13])+as.numeric(tmp[26,13]) +as.numeric(tmp[12,27])+as.numeric(tmp[26,27])
+    df[1,"seiki_unemp"] <- as.numeric(tmp[12,36])+as.numeric(tmp[26,36])
+    df[1,"seiki_nilf"] <- as.numeric(tmp[12,37])+as.numeric(tmp[26,37])
+    
+    df[1,"hiseiki_seiki"] <- as.numeric(tmp[13,12])+as.numeric(tmp[13,26]) +as.numeric(tmp[27,12])+as.numeric(tmp[27,26])
+    df[1,"unemp_seiki"] <- as.numeric(tmp[36,12])+as.numeric(tmp[36,26])
+    df[1,"nilf_seiki"] <- as.numeric(tmp[37,12])+as.numeric(tmp[37,26])
+    
+    df[1,"seiki_thismonth"] <- as.numeric(tmp[2,12])+as.numeric(tmp[2,26])-as.numeric(tmp[42,12])+as.numeric(tmp[42,26])
+    
+    
+    df_master <- rbind(df_master,df)
+    
+  }
+}
+    
+
+
+write.csv(df_master,str_c(dir,"\\正規化_201301_",i %>% str_sub(start = -10,end = -5) %>% as.character(),"_２か月連続サンプル_遡及済み.csv"))
+
+```
+
